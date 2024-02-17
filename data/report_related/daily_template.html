@@ -1,0 +1,63 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Daily</title>
+    <style>
+        table {{
+            border-collapse: collapse;
+            width: 50%;
+        }}
+
+        th, td {{
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+
+        }}
+
+        th {{
+            background-color: #f2f2f2;
+        }}
+    </style>
+</head>
+<body>
+    <h2>测试日报</h2>
+    <table>
+        <tr>
+            <th>项目</th>
+            <th>用例总数</th>
+            <th>通过数</th>
+            <th>失败数</th>
+        </tr>
+        <tr>
+            <td>总计</td>
+            <td>{total}</td>
+            <td>{pass}</td>
+            <td>{failed}</td>
+        </tr>
+        <tr>
+            <td>SFE项目</td>
+            <td>{sfe_total}</td>
+            <td>{sfe_pass}</td>
+            <td>{sfe_failed}</td>
+        </tr>
+        <tr>
+            <td>CRM项目</td>
+            <td>{crm_total}</td>
+            <td>{crm_pass}</td>
+            <td>{crm_failed}</td>
+        </tr>
+    </table>
+
+    <h3>明细</h3>
+    <table>
+        <tr>
+            <th>用例</th>
+            <th>结果</th>
+        </tr>
+        {details}
+
+    </table>
+
+</body>
+</html>

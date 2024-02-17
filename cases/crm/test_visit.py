@@ -1,0 +1,2 @@
+def start():
+    assert True
