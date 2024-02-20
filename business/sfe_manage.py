@@ -2,11 +2,14 @@ import allure
 import copy
 from basic.http_client import BasicHttpClient
 from basic.Environment import Environment
-from utils.get_path import get_data_path
 from pathlib import Path
 
 
 class SfeManage(BasicHttpClient):
+
+    def __init__(self):
+        super().__init__(**Environment().environment_dict)
+
     def get_tm_token(self):
         """获取太美 token"""
         path = '/gw/api/saas-web/open/get-tm-token'
@@ -110,7 +113,3 @@ class SfeManage(BasicHttpClient):
             "sorter": {"orders": [{"direction": "desc", "property": "createTime"}]}
         }
         return self._request('post', path, json=payload)
-
-
-def connect():
-    return SfeManage(*Environment.get())

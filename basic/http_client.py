@@ -7,12 +7,12 @@ class BasicHttpClient:
     _session = requests.Session()
     logging.basicConfig(level=logging.INFO, format='%(asctime)s  %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
-    def __init__(self, env, tenant_id, user_id, username, password):
-        self.username = username
-        self.password = password
-        self.user_id = user_id
-        self.tenant_id = tenant_id
+    def __init__(self, env, tenant_id, account, password):
+        print(f"This is env{env}")
         self.env = env
+        self.tenant_id = tenant_id
+        self.account = account
+        self.password = password
         self.base_path = f'https://{self.env}.pharmaos.com'
         self._headers = {}
         tenant_info = self.login_pharma()
@@ -27,7 +27,7 @@ class BasicHttpClient:
 
     def login_pharma(self):
         account_json = {
-            'account': self.username,
+            'account': self.account,
             'password': self.password
         }
         account_url = f'{self.base_path}/api/paas-user-web/login/account'
