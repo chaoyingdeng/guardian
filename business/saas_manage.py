@@ -3,8 +3,5 @@ from basic.Environment import Environment
 
 
 class SassManage(BasicHttpClient):
-    pass
-
-
-def connect():
-    return SassManage(*Environment.get())
+    def __init__(self):
+        super().__init__(**Environment().environment_dict)
