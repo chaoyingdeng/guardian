@@ -1,9 +1,7 @@
-import json
-import pytest
+import json, pytest, os, re, logging
 from business.instance import Instance
-import logging
 from datetime import datetime
-import os
+from utils.paths import Paths
 
 
 @pytest.fixture(name='instance', scope='session')
@@ -11,6 +9,16 @@ def setup_instance():
     instance = Instance()
     logging.info(f'instance_id = {id(instance)}')
     yield instance
+
+
+@pytest.fixture(name='case_file_name', scope='function')
+def create_case_data_file_path(request):
+    return re.findall(f'test[a-z_]+', request.node.nodeid)[0]
+
+
+@pytest.fixture(name='case_path_manage', scope='session')
+def case_path_manage():
+    return Paths()
 
 
 # -------------------------------------------------------------------------#
@@ -28,13 +36,7 @@ def pytest_configure(config):
 
 @pytest.hookimpl
 def pytest_collection_modifyitems(session, config, items):
-    """
-    修改收集测试用例逻辑, 然后根据标记修改测试用例执行顺序
-    :param session:
-    :param config:
-    :param items:
-    :return:
-    """
+    """ 修改收集测试用例逻辑, 然后根据标记修改测试用例执行顺序 """
     init = []
     end = []
     remaining = []
