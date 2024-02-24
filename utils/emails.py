@@ -4,7 +4,7 @@ from email.mime.base import MIMEBase
 from email import encoders
 from pathlib import Path
 from smtplib import SMTP
-
+import sys
 
 SERVER = 'smtp.qq.com'
 AUTH_CODE = 'rsabmlgwgcoebhfa'
@@ -69,7 +69,7 @@ class SendDailyReport(Email):
             details = ''
             for case, result in detail.items():
                 details += f" <tr><td>{case}</td><td>{result}</td> </tr>"
-            self.html = f.read().format(details=details, **summary)
+            self.html = f.read().format(report_link=sys.argv[1], details=details, **summary)
         self.title = 'Guardian Daily Report'
 
     def send_daily_report(self):
@@ -78,7 +78,6 @@ class SendDailyReport(Email):
 
 
 if __name__ == '__main__':
-
     SendDailyReport(
         sender=SENDER,
         receivers=RECEIVERS,

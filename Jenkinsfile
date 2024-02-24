@@ -61,14 +61,32 @@ pipeline {
 			'''
           }
         }
+
     }
 
 
-	post{
+		post{
 		always{
+            allure([
+                includeProperties: false,
+                jdk: '',
+                properties: [],
+                report: 'allure-report',
+                results: [[path: 'report/allure-results']]
+            ])
+
+            script {
+                String allureReportPath = "${BUILD_URL}allure/"
+                echo "Allure report path: ${allureReportPath}"
+                env.ALLURE_REPORT_PATH = allureReportPath
+            }
+
+
 		    sh '''
-			python3 utils/emails.py
+			python3 utils/emails.py ${env.ALLURE_REPORT_PATH}
 			'''
 		}
+
+
 	}
 }
