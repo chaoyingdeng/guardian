@@ -4,7 +4,11 @@ from email.mime.base import MIMEBase
 from email import encoders
 from pathlib import Path
 from smtplib import SMTP
-from basic.exceptions import FileNotExistError
+
+SERVER = 'smtp.qq.com'
+AUTH_CODE = 'rsabmlgwgcoebhfa'
+SENDER = '406125295@qq.com'
+RECEIVERS = '406125295@qq.com, dengchaoying18@gmail.com'
 
 
 class Email:
@@ -38,7 +42,7 @@ class Email:
 
     def _attach_file(self, file_path):
         if not Path(file_path).exists():
-            raise FileNotExistError(file_path)
+            raise FileNotFoundError(file_path)
         with open(file_path, 'rb') as f:
             part = MIMEBase('application', 'octet-stream')
             part.set_payload(f.read())
@@ -73,11 +77,9 @@ class SendDailyReport(Email):
 
 
 if __name__ == '__main__':
-    import setting
-
     SendDailyReport(
-        sender=setting.SENDER,
-        receivers=setting.RECEIVERS,
-        server=setting.SERVER,
-        auth_code=setting.AUTH_CODE
+        sender=SENDER,
+        receivers=RECEIVERS,
+        server=SERVER,
+        auth_code=AUTH_CODE
     ).send_daily_report()
