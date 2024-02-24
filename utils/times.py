@@ -20,8 +20,12 @@ class Times:
 
     @property
     def pre_month(self):
-        return (self._now - relativedelta(month=1)).strftime(f"%m")
+        return (self._now - relativedelta(months=1)).strftime("%m")
 
     @property
     def today(self):
         return self._now.strftime(f'%Y-%m-%d')
+
+
+if __name__ == '__main__':
+    print(Times().month)

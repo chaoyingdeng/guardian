@@ -5,6 +5,7 @@ from email import encoders
 from pathlib import Path
 from smtplib import SMTP
 
+
 SERVER = 'smtp.qq.com'
 AUTH_CODE = 'rsabmlgwgcoebhfa'
 SENDER = '406125295@qq.com'
@@ -77,6 +78,7 @@ class SendDailyReport(Email):
 
 
 if __name__ == '__main__':
+
     SendDailyReport(
         sender=SENDER,
         receivers=RECEIVERS,
