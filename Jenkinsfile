@@ -29,8 +29,8 @@ pipeline {
             steps {
                 retry(3) {
                 git branch: 'master',
-                credentialsId: 'chaoying',
-                url: 'git@github.com:yingzhixiaochaoren/guardian.git'
+                credentialsId: 'root',
+                url: 'git@github.com:chaoyingdeng/guardian.git'
 				}
 
             }
