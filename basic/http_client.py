@@ -53,6 +53,6 @@ class BasicHttpClient:
         _url = self.base_path + url
         _resp = session.request(method, _url, headers=headers, params=params, data=data, json=json, files=files)
         logging.info(f'response time :{_resp.elapsed.total_seconds()}')
-        logging.info(f'{headers}')
-        logging.info(f'\n current api:{_resp.request.url},\n json: {_resp.request.body}\n resp: {_resp.text} \n done')
+        logging.info(f'current api:{_resp.request.url},\njson: {_resp.request.body}\nresp: {_resp.text} \ndone\n\n')
+
         return _resp
