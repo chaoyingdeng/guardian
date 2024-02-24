@@ -1,5 +1,11 @@
 pipeline {
     agent any
+    options {
+        disableConcurrentBuilds() // 禁止并发构建
+        timeout(time: 2, unit: 'HOURS') // 设置构建超时时间为1小时
+        buildDiscarder(logRotator(numToKeepStr: '10')) // 保留最近的 5 次构建
+    }
+
     stages {
         stage('Build') {
             steps{
