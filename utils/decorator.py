@@ -1,3 +1,6 @@
+from basic.exceptions import ExcelNotLoadError
+
+
 class Decorator:
 
     @staticmethod
@@ -10,3 +13,12 @@ class Decorator:
             return instances[cls]
 
         return get_instance
+
+    @staticmethod
+    def check_load(func):
+        def wrapper(self, *args, **kwargs):
+            if not self._load:
+                raise ExcelNotLoadError()
+            return func(self, *args, **kwargs)
+
+        return wrapper
