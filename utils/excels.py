@@ -42,4 +42,3 @@ class Excel:
     @Decorator.check_load
     def to_excel(self, file_path):
         return self._df.to_excel(file_path, index=False)
-n
