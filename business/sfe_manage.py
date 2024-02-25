@@ -10,12 +10,7 @@ class SfeManage(BasicHttpClient):
     def __init__(self):
         super().__init__(**Environment().environment_dict)
 
-    def get_tm_token(self):
-        """获取太美 token"""
-        path = '/gw/api/saas-web/open/get-tm-token'
-        return self._request('get', path)
-
-    @allure.step('流向列表查询')
+    @allure.step('月流向列表查询')
     def month_flow_query(self, period_id, data_version):
         path = '/gw/api/sales-operation-sfe-admin-svc/flow/month/list'
         payload = {
@@ -26,7 +21,7 @@ class SfeManage(BasicHttpClient):
         }
         return self._request('post', path, json=payload)
 
-    @allure.step('明细查询')
+    @allure.step('流向明细查询')
     def month_flow_detail(self, flow_id):
         path = f'/gw/api/sales-operation-sfe-admin-svc/flow/month/detail/{flow_id}'
         return self._request('get', url=path)
@@ -49,26 +44,6 @@ class SfeManage(BasicHttpClient):
         path = '/gw/api/sales-operation-sfe-admin-svc/period/getPreviousPeriodByDate'
 
         return self._request('get', path)
-
-    @allure.step('获取财年列表')
-    def get_financial_year__list(self):
-        path = '/gw/api/indicator-admin-svc/admin/indicator/financial/list'
-        return self._request('get', path)
-
-    @allure.step('校验对应财年指标配置是否存在')
-    def get_indicator_config(self, year_id):
-        path = f'/gw/api/indicator-admin-svc/admin/indicator/config/{year_id}'
-        return self._request('get', path)
-
-    @allure.step('指标列表查询')
-    def get_indicator_list(self, year_id, indicator_type=None, node_list=None):
-        path = '/gw/api/indicator-admin-svc/admin/indicator/page?current=1&size=20'
-        payload = {
-            "financialYearId": year_id,
-            "isTarget": indicator_type,
-            "nodeCodeList": [node_list]
-        }
-        return self._request('post', path, json=payload)
 
     @allure.step('获取日流向模板')
     def get_day_flow_template(self):
@@ -111,5 +86,42 @@ class SfeManage(BasicHttpClient):
                 "dateEnd": date_end
             },
             "sorter": {"orders": [{"direction": "desc", "property": "createTime"}]}
+        }
+        return self._request('post', path, json=payload)
+
+    # --------------#
+    # 指标相关       #
+    # --------------#
+    @allure.step('获取财年列表')
+    def get_financial_year__list(self):
+        path = '/gw/api/indicator-admin-svc/admin/indicator/financial/list'
+        return self._request('get', path)
+
+    @allure.step('校验对应财年指标配置是否存在')
+    def get_indicator_config(self, year_id):
+        path = f'/gw/api/indicator-admin-svc/admin/indicator/config/{year_id}'
+        return self._request('get', path)
+
+    @allure.step('指标列表查询')
+    def get_indicator_list(self, year_id, indicator_type=None, node_list=None):
+        path = '/gw/api/indicator-admin-svc/admin/indicator/page?current=1&size=20'
+        payload = {
+            "financialYearId": year_id,
+            "isTarget": indicator_type,
+            "nodeCodeList": [node_list]
+        }
+        return self._request('post', path, json=payload)
+
+    @allure.step('获取账期列表')
+    def get_indicator_period_list(self, year_id):
+        path = f'/gw/api/indicator-admin-svc/admin/indicator/period/list/{year_id}'
+        return self._request('get', path)
+
+    @allure.step('导出指标模板')
+    def export_indicator_template(self, period_list: []):
+        path = '/gw/api/indicator-admin-svc/admin/indicator/template/export'
+        payload = {
+            "financialYearId": "8ac276a18c1542e7018ce7207d060031",
+            "periodIdList": period_list
         }
         return self._request('post', path, json=payload)
