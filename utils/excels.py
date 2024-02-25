@@ -42,3 +42,6 @@ class Excel:
     @Decorator.check_load
     def to_excel(self, file_path):
         return self._df.to_excel(file_path, index=False)
+
+    def guess_data(self):
+        res = [column for column in self._columns if '*' in column]
