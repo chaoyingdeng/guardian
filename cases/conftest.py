@@ -2,6 +2,9 @@ import json, pytest, os, re, logging
 from business.instance import Instance
 from datetime import datetime
 from utils.paths import create_case_test_file_path
+from utils.fakes import Fakers
+from utils.excels import Excel
+from functools import partial
 
 
 @pytest.fixture(name='instance', scope='session')
@@ -13,13 +16,22 @@ def setup_instance():
 
 @pytest.fixture(name='case_file_name', scope='function')
 def create_case_data_file_path(request):
-    return re.findall(f'test[a-z_]+', request.node.nodeid)[0]
+    return re.findall(f'test[a-z0-9_]+', request.node.nodeid)[0]
 
 
 @pytest.fixture(name='case_path_manage', scope='function')
-def case_path_manage():
-    return create_case_test_file_path
+def case_path_manage(case_file_name):
+    return partial(create_case_test_file_path, case_file_name)
 
+
+@pytest.fixture(name='faker', scope='session')
+def fake_manage():
+    yield Fakers()
+
+
+@pytest.fixture(name='excel')
+def excel_manage():
+    yield Excel()
 
 # -------------------------------------------------------------------------#
 # pytest hooks                                                             #
