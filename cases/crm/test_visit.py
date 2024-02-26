@@ -1,6 +1,9 @@
 from basic.exceptions import ExcelNotLoadError
 
+# test_example.py
 
-def start(instance, handle_guardian_error):
-    raise ExcelNotLoadError('123')
-    assert True
+
+def start():
+    raise ExcelNotLoadError
+    assert 1
+    print('测试完成了')

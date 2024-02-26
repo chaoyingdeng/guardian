@@ -6,6 +6,7 @@ from utils.fakes import Fakers
 from utils.excels import Excel
 from functools import partial
 from basic.exceptions import GuardianError
+import logging
 
 
 @pytest.fixture(name='instance', scope='session')
@@ -14,39 +15,33 @@ def setup_instance():
     logging.info(f'instance_id = {id(instance)}')
     yield instance
 
+@pytest.fixture(name='faker', scope='session')
+def fake_manage():
+    yield Fakers()
+
 
 @pytest.fixture(name='case_file_name', scope='function')
 def create_case_data_file_path(request):
     return re.findall(f'test[a-z0-9_]+', request.node.nodeid)[0]
 
 
-@pytest.fixture(name='case_path_manage', scope='function')
+@pytest.fixture(name='case_path_manage',scope='function')
 def case_path_manage(case_file_name):
     return partial(create_case_test_file_path, case_file_name)
-
-
-@pytest.fixture(name='faker', scope='session')
-def fake_manage():
-    yield Fakers()
-
 
 @pytest.fixture(name='excel')
 def excel_manage():
     yield Excel()
 
 
-@pytest.fixture(name='handle_guardian_error')
-def handle_guardian_error():
-    try:
-        yield
-        print('函数执行完成, 已经到了yield')
-    except GuardianError as e:
-        raise AssertionError(f"Guardian error: {e}") from e
-
-
 # -------------------------------------------------------------------------#
 # pytest hooks                                                             #
 # -------------------------------------------------------------------------#
+
+@pytest.hookimpl
+def pytest_sessionstart(session):
+    from pathlib import Path
+    print(333)
 
 
 @pytest.hookimpl
@@ -55,6 +50,23 @@ def pytest_configure(config):
     config.addinivalue_line('markers', 'end: end case')
     config.addinivalue_line('markers', 'p0: p0 case')
     config.addinivalue_line('markers', 'p1: p1 case')
+
+
+
+#
+# @pytest.hookimpl
+# def pytest_exception_interact(node, call, report):
+#     if call.excinfo.type == ZeroDivisionError:
+#         raise IndexError('就error')
+
+
+@pytest.hookimpl
+def pytest_runtest_call(item):
+    """ 捕获用例中的已知异常,转换为断言异常, 因为在pytest中非断言异常也会中断测试,但是在测试报告中显示break,而不是fail"""
+    try:
+        item.runtest()
+    except GuardianError as e:
+        raise AssertionError('用例执行异常') from e
 
 
 @pytest.hookimpl

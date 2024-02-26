@@ -23,6 +23,7 @@ class Excel:
         self._columns = self._df.columns
         self.row_size, self.columns_size = self._df.shape
         self._load = True
+        return self
 
     def _open(self, excel_path):
         return pd.read_csv(excel_path) if str(excel_path).endswith('csv') else pd.read_excel(excel_path)
@@ -42,6 +43,8 @@ class Excel:
     @Decorator.check_load
     def to_excel(self, file_path):
         return self._df.to_excel(file_path, index=False)
+
+
 
     def guess_data(self):
         res = [column for column in self._columns if '*' in column]

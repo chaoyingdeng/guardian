@@ -44,3 +44,9 @@ class Fakers:
 
     def random_int(self, size=1):
         return np.random.randint(1, 100, size=size)
+
+    def get_spec_name(self):
+        return 123
+
+    def get_unit_name(self):
+        return 456
