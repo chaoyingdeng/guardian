@@ -1,3 +1,4 @@
+from basic.exceptions import GuardianError
 from basic.exceptions import ExcelNotLoadError
 
 
@@ -22,3 +23,4 @@ class Decorator:
             return func(self, *args, **kwargs)
 
         return wrapper
+

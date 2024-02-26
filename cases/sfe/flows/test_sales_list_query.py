@@ -1,7 +1,9 @@
 import allure
+from utils.decorator import Decorator
 
 
 @allure.title('月流向列表查询功能校验')
+@Decorator.handle_guardian_error
 def start(instance):
     pre_period = instance.sfe.get_pre_period().json().get('data').get('id')
     resp_1 = instance.sfe.month_flow_query(pre_period, 1)

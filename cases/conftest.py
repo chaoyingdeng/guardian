@@ -5,6 +5,7 @@ from utils.paths import create_case_test_file_path
 from utils.fakes import Fakers
 from utils.excels import Excel
 from functools import partial
+from basic.exceptions import GuardianError
 
 
 @pytest.fixture(name='instance', scope='session')
@@ -32,6 +33,15 @@ def fake_manage():
 @pytest.fixture(name='excel')
 def excel_manage():
     yield Excel()
+
+
+@pytest.fixture(name='handle_guardian_error')
+def handle_guardian_error():
+    try:
+        yield
+        print('函数执行完成, 已经到了yield')
+    except GuardianError as e:
+        raise AssertionError(f"Guardian error: {e}") from e
 
 
 # -------------------------------------------------------------------------#

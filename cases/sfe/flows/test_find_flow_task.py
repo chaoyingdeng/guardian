@@ -1,5 +1,6 @@
 import allure
 from utils.times import Times
+from utils.decorator import Decorator
 
 
 @allure.title('日流向任务列表查询功能校验')

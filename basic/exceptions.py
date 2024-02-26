@@ -1,4 +1,4 @@
-class GuardianError(Exception):
+class GuardianError(AttributeError):
     def __str__(self):
         return 'Guardian Error'
 

@@ -1,9 +1,11 @@
 import allure
 import pytest
+from utils.decorator import Decorator
 
 
 @allure.title('日流向上传功能校验')
 @pytest.mark.init
+@Decorator.handle_guardian_error
 def start(instance, case_path_manage, excel, faker):
     flow_template_stream = instance.sfe.get_day_flow_template()
     p = case_path_manage('day_flow_template.xlsx')
