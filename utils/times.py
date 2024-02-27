@@ -28,4 +28,4 @@ class Times:
 
 
 if __name__ == '__main__':
-    print(Times().month)
+    print(Times().today)

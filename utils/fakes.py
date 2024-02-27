@@ -50,3 +50,9 @@ class Fakers:
 
     def get_unit_name(self):
         return 456
+
+
+if __name__ == '__main__':
+    f = Fakers()
+    res = [[f.get_unit_name(), f.get_spec_name()] for i in range(10)]
+    print(res)
