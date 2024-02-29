@@ -50,18 +50,27 @@ def pytest_configure(config):
 
 
 # @pytest.hookimpl
-# def pytest_exception_interact(node, call, report):
-#     if call.excinfo.type == ZeroDivisionError:
-#         raise IndexError('就error')
+# def pytest_runtest_call(item):
+#     """ 捕获用例中的已知异常,转换为断言异常
+#     """ 不能这样使用，如果出现异常会导致重新调用测试套件
+#     try:
+#         item.runtest()
+#     except GuardianError as e:
+#         raise AssertionError('用例执行异常') from e
 
 
-@pytest.hookimpl
-def pytest_runtest_call(item):
-    """ 捕获用例中的已知异常,转换为断言异常 """
-    try:
-        item.runtest()
-    except GuardianError as e:
-        raise AssertionError('用例执行异常') from e
+
+#
+# @pytest.fixture(autouse=True)
+# def guardian_error_handler(request):
+#     print('123123')
+#     def pytest_runtest_protocol(item, nextitem):
+#         try:
+#             yield
+#         except GuardianError as e:
+#             pytest.fail(f"GuardianError caught: {e}")
+#     request.node.ihook.pytest_runtest_protocol = pytest_runtest_protocol
+#
 
 
 @pytest.hookimpl
