@@ -165,3 +165,5 @@ screenshot/*
 report/allure-results/
 /data/*
 !/data/report_related/
+/cases/crm/report
+/cases/sfe/*/report
