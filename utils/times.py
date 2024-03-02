@@ -26,6 +26,6 @@ class Times:
     def today(self):
         return self._now.strftime(f'%Y-%m-%d')
 
-
-if __name__ == '__main__':
-    print(Times().today)
+    @property
+    def period(self):
+        return self._now.strftime(f'%Y%m')

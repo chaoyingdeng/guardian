@@ -30,8 +30,8 @@ _product = [
 class Fakers:
     faker = Faker(['zh_CN'])
 
-    def get_hospital_name(self, size=1):
-        return [self.faker.city() + np.random.choice(_hospital_name) for _ in range(max(1, size))]
+    def get_hospital_name(self):
+        return self.faker.city() + np.random.choice(_hospital_name)
 
     def get_doctor_name(self, size=1):
         return [self.faker.name() for _ in range(max(1, size))]
@@ -39,20 +39,8 @@ class Fakers:
     def get_department_name(self, size=1):
         return np.random.choice(_departments, size=size)
 
-    def get_product_name(self, size=1):
-        return np.random.choice(_product, size=size)
+    def get_product_name(self):
+        return np.random.choice(_product)
 
     def random_int(self, size=1):
         return np.random.randint(1, 100, size=size)
-
-    def get_spec_name(self):
-        return 123
-
-    def get_unit_name(self):
-        return 456
-
-
-if __name__ == '__main__':
-    f = Fakers()
-    res = [[f.get_unit_name(), f.get_spec_name()] for i in range(10)]
-    print(res)

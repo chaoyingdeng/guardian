@@ -1,18 +1,21 @@
-import time
-import requests
 import allure
 import pytest
-from utils.excels import check_columns_contains
+import logging
 
 
 @allure.title('日流向上传功能校验')
 @pytest.mark.init
-def start(instance, case_path_manage, excel):
+def start(instance, excel, case_path_manage):
+    flow_template_path = case_path_manage("day_flow_template.xlsx")
+    test_data_res_path = case_path_manage("day_flow_template_res.xlsx")
+
     flow_template_stream = instance.sfe.get_day_flow_template()
-    flow_template = case_path_manage('day_flow_template.xlsx')
-    with open(flow_template, 'wb') as file:
-        file.write(flow_template_stream.content)
-    print(excel.load(flow_template).columns)
-    target_columns = [column for column in excel.load(flow_template).columns if f'*' in column]
-    print(target_columns)
-    assert 1
+    flow_template_path.write_bytes(flow_template_stream.content)
+
+    excel.load(flow_template_path)
+    logging.info(excel.columns)
+
+    test_df = excel.create_test_data(10)
+    excel.to_excel(test_data_res_path, test_df)
+    print(test_data_res_path)
+    # assert ...

@@ -30,7 +30,7 @@ def case_path_manage(case_file_name):
     return partial(create_case_test_file_path, case_file_name)
 
 
-@pytest.fixture(name='excel')
+@pytest.fixture(name='excel', scope='function')
 def excel_manage():
     yield Excel()
 
@@ -48,7 +48,6 @@ def pytest_configure(config):
     config.addinivalue_line('markers', 'p1: p1 case')
 
 
-
 # @pytest.hookimpl
 # def pytest_runtest_call(item):
 #     """ 捕获用例中的已知异常,转换为断言异常
@@ -57,7 +56,6 @@ def pytest_configure(config):
 #         item.runtest()
 #     except GuardianError as e:
 #         raise AssertionError('用例执行异常') from e
-
 
 
 #
@@ -70,7 +68,6 @@ def pytest_configure(config):
 #         except GuardianError as e:
 #             pytest.fail(f"GuardianError caught: {e}")
 #     request.node.ihook.pytest_runtest_protocol = pytest_runtest_protocol
-#
 
 
 @pytest.hookimpl
