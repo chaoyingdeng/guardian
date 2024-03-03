@@ -1,4 +1,5 @@
-import json, pytest, os, re, logging
+import json, pytest, re, logging
+from pathlib import Path
 from business.instance import Instance
 from datetime import datetime
 from utils.paths import create_case_test_file_path
@@ -38,6 +39,10 @@ def excel_manage():
 # -------------------------------------------------------------------------#
 # pytest hooks                                                             #
 # -------------------------------------------------------------------------#
+
+
+def pytest_sessionstart(session):
+    print('test')
 
 
 @pytest.hookimpl
@@ -105,64 +110,51 @@ def pytest_collection_modifyitems(session, config, items):
     items[:] = remaining
 
 
-@pytest.hookimpl(tryfirst=True, hookwrapper=True)
-def pytest_make_collect_report(collector):
-    # collector 类型是<_pytest.python.Module>或者package,因为有init方法
-    # 是一个收集用例的测试报告对象,每次收集到一个测试用例都会新建一个该对象
-    # report是一个CollectReport
-    out = yield
-    report = out.get_result()
-    if type(collector) is pytest.Module:
-        setattr(collector, 'report_collect', report)
-
-
-@pytest.hookimpl(hookwrapper=True, tryfirst=True)
-def pytest_runtest_makereport(item, call):
-    """
-    每个测试用例的执行会调用三次该函数, 分别是执行时机 =setup,call,teardown
-    :param item:
-    :param call:
-    :return:
-    """
-    # 钩子函数前置执行完成后,会执行yield
-    # 保证其他钩子函数的执行,钩子函数必须这样写
-    out = yield
-    # 获取TestReport对象
-    res = out.get_result()
-    # 把report对象动态添加到了case属性中
-    setattr(item, "report_" + res.when, res)
+# @pytest.hookimpl(tryfirst=True, hookwrapper=True)
+# def pytest_make_collect_report(collector):
+#     # collector 类型是<_pytest.python.Module>或者package,因为有init方法
+#     # 是一个收集用例的测试报告对象,每次收集到一个测试用例都会新建一个该对象
+#     # report是一个CollectReport
+#     out = yield
+#     report = out.get_result()
+#     if type(collector) is pytest.Module:
+#         setattr(collector, 'report_collect', report)
+#
+#
+# @pytest.hookimpl(hookwrapper=True, tryfirst=True)
+# def pytest_runtest_makereport(item, call):
+#     """
+#     每个测试用例的执行会调用三次该函数, 分别是执行时机 =setup,call,teardown
+#     :param item:
+#     :param call:
+#     :return:
+#     """
+#     # 钩子函数前置执行完成后,会执行yield
+#     # 保证其他钩子函数的执行,钩子函数必须这样写
+#     out = yield
+#     # 获取TestReport对象
+#     res = out.get_result()
+#     # 把report对象动态添加到了case属性中
+#     setattr(item, "report_" + res.when, res)
 
 
 @pytest.hookimpl
 def pytest_terminal_summary(terminalreporter, config):
+    # 筛选测试用例的辅助函数
     def filter_cases_by_prefix(case_items, prefix):
-        return [case for case in case_items if case.nodeid.startswith(prefix)]
+        return [case for case in case_items if prefix in case.nodeid]
 
-    def log_cases(logger, title, case_items):
-        logger.info(f'-------------------------{title}--------------------------------------')
-        if case_items:
-            for case in case_items:
-                logger.info(f'{datetime.fromtimestamp(case.start).strftime("%Y-%m-%d %H:%M:%S")}: {case.nodeid}')
-
-    case_num = terminalreporter._numcollected
+    # 计算测试统计信息
     success_case_items = terminalreporter.stats.get('passed', [])
     fail_case_items = terminalreporter.stats.get('failed', [])
+    case_num = len(success_case_items) + len(fail_case_items)
 
     crm_success_cases = filter_cases_by_prefix(success_case_items, 'cases/crm')
     crm_fail_cases = filter_cases_by_prefix(fail_case_items, 'cases/crm')
     sfe_success_cases = filter_cases_by_prefix(success_case_items, 'cases/sfe')
     sfe_fail_cases = filter_cases_by_prefix(fail_case_items, 'cases/sfe')
 
-    logging.info('--------------------TerminalReport--------------------------------')
-    logging.info(f'total:{case_num} 成功:{len(success_case_items)} 失败:{len(fail_case_items)}')
-    logging.info(
-        f'  cem:{len(crm_success_cases) + len(crm_fail_cases)} 成功:{len(crm_success_cases)} 失败:{len(crm_fail_cases)}')
-    logging.info(
-        f'  sfe:{len(sfe_success_cases) + len(sfe_fail_cases)} 成功:{len(sfe_success_cases)} 失败:{len(sfe_fail_cases)}')
-
-    log_cases(logging, 'pass', success_case_items)
-    log_cases(logging, 'fail', fail_case_items)
-
+    # 构建测试汇总信息
     test_summary = {
         'total': case_num,
         'pass': len(success_case_items),
@@ -175,13 +167,18 @@ def pytest_terminal_summary(terminalreporter, config):
         'crm_failed': len(crm_fail_cases),
     }
 
-    success_case_detail = {case: 'pass' for case in [_case.nodeid.split('.py')[0] for _case in success_case_items]}
-    fail_case_detail = {case: 'fail' for case in [_case.nodeid.split('.py')[0] for _case in fail_case_items]}
+    # 构建测试详细信息
+    test_detail = {
+        case.nodeid: 'fail' for case in fail_case_items
+    }
 
-    test_detail = dict(sorted({**success_case_detail, **fail_case_detail}.items(), key=lambda item: item[1]))
+    # 确保输出目录存在
+    report_dir = Path(config.rootdir) / 'data' / 'report_related'
 
-    with open(os.path.join(config.rootdir, 'data', 'report_related', 'report.json'), 'w') as report:
-        json.dump(test_summary, report)
+    report_file = report_dir / 'report.json'
+    with report_file.open('w', encoding='utf-8') as f:
+        json.dump(test_summary, f, ensure_ascii=False, indent=4)
 
-    with open(os.path.join(config.rootdir, 'data', 'report_related', 'origin_report.json'), 'w') as origin_report:
-        json.dump(test_detail, origin_report)
+    origin_report_file = report_dir / 'origin_report.json'
+    with origin_report_file.open('w', encoding='utf-8') as f:
+        json.dump(test_detail, f, ensure_ascii=False, indent=4)

@@ -5,7 +5,7 @@ import logging
 
 @allure.title('日流向上传功能校验')
 @pytest.mark.init
-def start(instance, excel, case_path_manage):
+def st11a1rt(instance, excel, case_path_manage):
     flow_template_path = case_path_manage("day_flow_template.xlsx")
     test_data_res_path = case_path_manage("day_flow_template_res.xlsx")
 

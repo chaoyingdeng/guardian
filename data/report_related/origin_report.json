@@ -1,1 +1,3 @@
-{"cases/crm/test_assit": "fail", "cases/sfe/flows/test_find_flow_task": "fail", "cases/sfe/flows/test_upload_day_flow": "pass", "cases/crm/test_visit": "pass", "cases/sfe/flows/test_sales_list_query": "pass", "cases/sfe/indicator/test_indicator_list_query": "pass", "cases/sfe/indicator/test_indicator_upload": "pass"}
+{
+    "cases/crm/test_assit.py::start": "fail"
+}
