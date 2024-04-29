@@ -74,6 +74,46 @@ class SfeManage(BasicHttpClient):
         }
         return self._request('post', path, json=payload)
 
+    @allure.step('获取月流向模板')
+    def get_day_month_template(self):
+        path = '/gw/api/sales-operation-sfe-admin-svc/flow/month/template/download'
+        return self._request('get', path)
+
+    @allure.step('上传月流向')
+    def month_flow_import(self, file_path, period_id=None, data_version=1):
+        path = '/gw/api/sales-operation-sfe-admin-svc/flow/month/import'
+        headers = copy.deepcopy(self._headers)
+        headers.pop('Content-Type')
+
+        payload = {
+            'periodId': period_id,
+            'dataVersion': data_version,
+            'dataHandingModel': 0
+        }
+
+        with open(file_path, 'rb') as f:
+            files = {'file': (Path(file_path).name, f)}
+            resp = self._request('post', path, headers=headers, files=files, data=payload)
+
+        return resp
+
+    @allure.step('提交月流向')
+    def month_flow_commit(self, period_id=None, file_token=None, data_version=1):
+        path = '/gw/api/sales-operation-sfe-admin-svc/flow/month/import/commit'
+        payload = {"periodId": period_id,
+                   "dataVersion": data_version,
+                   "dataHandingModel": 0,
+                   "success": True,
+                   "token": file_token,
+                   "fileName": None,
+                   "requestUrl": "/download/error?errorToken=null",
+                   "dataToken": file_token,
+                   "dataConvertToken": None,
+                   "errorToken": None
+                   }
+
+        return self._request('post', path, json=payload)
+
     @allure.step('日月流向任务列表查询')
     def flow_task_query(self, collect_mob=None, collect_type=None, create_name=None, date_begin=None, date_end=None):
         path = '/gw/api/sales-operation-sfe-admin-svc/flow/filetask/list'
@@ -111,6 +151,11 @@ class SfeManage(BasicHttpClient):
             "nodeCodeList": [node_list]
         }
         return self._request('post', path, json=payload)
+
+    @allure.step('获取当前账期')
+    def get_current_period(self):
+        path = '/gw/api/indicator-admin-svc/admin/indicator/current/period'
+        return self._request('get', path)
 
     @allure.step('获取账期列表')
     def get_indicator_period_list(self, year_id):

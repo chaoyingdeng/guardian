@@ -42,7 +42,7 @@ def excel_manage():
 
 
 def pytest_sessionstart(session):
-    print('test')
+    print('测试流程开始')
 
 
 @pytest.hookimpl

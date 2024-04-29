@@ -2,4 +2,4 @@ from basic.exceptions import ExcelNotLoadError
 
 
 def start():
-    assert 0
+    assert 1

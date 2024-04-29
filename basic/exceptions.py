@@ -38,3 +38,11 @@ class ColumnNotExistsError(GuardianError):
 class ExcelNotLoadError(GuardianError):
     def __str__(self):
         return f'Excel Not Load'
+
+
+class ExcelConvertError(GuardianError):
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return f'Excel Convert Fail: + {self.msg}'

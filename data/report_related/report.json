@@ -1,11 +1,11 @@
 {
-    "total": 4,
-    "pass": 3,
-    "failed": 1,
-    "sfe_total": 2,
-    "sfe_pass": 2,
+    "total": 8,
+    "pass": 8,
+    "failed": 0,
+    "sfe_total": 6,
+    "sfe_pass": 6,
     "sfe_failed": 0,
     "crm_total": 2,
-    "crm_pass": 1,
-    "crm_failed": 1
+    "crm_pass": 2,
+    "crm_failed": 0
 }
