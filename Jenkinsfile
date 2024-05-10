@@ -77,6 +77,7 @@ pipeline {
 
 
 
+            echo "${BUILD_URL}"
 
             sh "python3 utils/emails.py ${BUILD_URL}allure/"
 

@@ -7,6 +7,7 @@ from utils.fakes import Fakers
 from utils.excels import Excel
 from functools import partial
 from basic.exceptions import GuardianError
+import setting
 
 
 @pytest.fixture(name='instance', scope='session')
@@ -34,6 +35,11 @@ def case_path_manage(case_file_name):
 @pytest.fixture(name='excel', scope='function')
 def excel_manage():
     yield Excel()
+
+
+@pytest.fixture(name='user_info', scope='session')
+def get_user_info():
+    yield setting.user_id
 
 
 # -------------------------------------------------------------------------#

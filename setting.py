@@ -1,8 +1,11 @@
 # 项目配置
 env = 'test'
-tenant_id = 'f307d736abb641b6a76ca13fea537690'
-account = '15737776808'
+account = '13193452734'
 password = 'Test123456'
+tenant_id = '20dad5856deb4d33acd962b0a8ed13f5'
+user_id = '8ac274db8d20e2b0018d30141e39039a'
+account_id = '8ac275b97a7bbcfa017a7eceb3d60002'
+
 
 # 邮件配置
 SERVER = 'smtp.qq.com'

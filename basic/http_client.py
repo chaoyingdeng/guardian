@@ -1,6 +1,7 @@
 import requests
 import logging
 from requests.adapters import HTTPAdapter
+import setting
 
 
 class BasicHttpClient:
@@ -33,8 +34,16 @@ class BasicHttpClient:
         account_url = f'{self.base_path}/api/paas-user-web/login/account'
         account_details_url = f'{self.base_path}/api/paas-user-web/end-point?redirectURL={self.base_path}/gw/api/saas-web/cas-client/account-details?appCode=saas'
         account = f'{self.base_path}/gw/api/saas-web/cas-client/account-details?appCode=saas'
+        cut_target_tenant = f'{self.base_path}/api/paas-user-web/account/tenant-default/{setting.account_id}/{self.tenant_id}'
+
+        data = {
+            'tenantId': self.tenant_id
+        }
+
         self._session.request("POST", account_url, data=account_json)
         self._session.request("GET", account_details_url)
+        self._session.request("PUT", cut_target_tenant, data=data)
+
         tenant_info = self._session.request("GET", account)
         resp = tenant_info.json().get('data')
         return resp
@@ -52,6 +61,7 @@ class BasicHttpClient:
             headers = self._headers
         _url = self.base_path + url
         _resp = session.request(method, _url, headers=headers, params=params, data=data, json=json, files=files)
+        logging.info(headers)
         logging.info(f'response time :{_resp.elapsed.total_seconds()}')
         logging.info(f'current api:{_resp.request.url},\njson: {_resp.request.body}\nresp: {_resp.text} \ndone\n\n')
 
