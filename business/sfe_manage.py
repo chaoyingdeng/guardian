@@ -163,10 +163,10 @@ class SfeManage(BasicHttpClient):
         return self._request('get', path)
 
     @allure.step('导出指标模板')
-    def export_indicator_template(self, period_list: []):
+    def export_indicator_template(self,year_id, period_list: []):
         path = '/gw/api/indicator-admin-svc/admin/indicator/template/export'
         payload = {
-            "financialYearId": "8ac276a18c1542e7018ce7207d060031",
+            "financialYearId": year_id,
             "periodIdList": period_list
         }
         return self._request('post', path, json=payload)
