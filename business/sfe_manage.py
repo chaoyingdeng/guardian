@@ -133,7 +133,7 @@ class SfeManage(BasicHttpClient):
     # 指标相关       #
     # --------------#
     @allure.step('获取财年列表')
-    def get_financial_year__list(self):
+    def get_financial_year_list(self):
         path = '/gw/api/indicator-admin-svc/admin/indicator/financial/list'
         return self._request('get', path)
 

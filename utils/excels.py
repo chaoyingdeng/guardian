@@ -17,7 +17,6 @@ class Excel:
 
     @property
     def columns(self):
-        print(self._df.columns)
         return self._df.columns
 
     @property

@@ -15,7 +15,7 @@ def start(instance, excel, case_path_manage):
     excel.to_excel(test_data_res_path)
 
     import_resp = instance.sfe.day_flow_import(test_data_res_path)
-    file_token = import_resp.json().get('data').get('token')
+    file_token = import_resp.get('token')
 
     resp = instance.sfe.day_flow_commit(file_token)
-    assert resp.json().get('success'), '日流向上传失败'
+    assert resp, '日流向上传失败'

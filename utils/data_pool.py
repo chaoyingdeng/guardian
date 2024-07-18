@@ -62,7 +62,6 @@ def guess_column(column: str, size):
     """ 使用模式匹配处理 """
     _size = min(SIZE, abs(size))
     data_pool = DataPool()
-    print(column + '开始处理')
     match column:
         case col if '日期' in col:
             return [Times().today for _ in range(_size)]

@@ -1,3 +1,5 @@
+import datetime
+
 import requests
 import logging
 from requests.adapters import HTTPAdapter
@@ -9,7 +11,6 @@ class BasicHttpClient:
     logging.basicConfig(level=logging.INFO, format='%(asctime)s  %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
     def __init__(self, env, tenant_id, account, password):
-        print(f"This is env{env}")
         self.env = env
         self.tenant_id = tenant_id
         self.account = account
@@ -56,13 +57,17 @@ class BasicHttpClient:
             return self._send(session, method, url, headers=headers, params=params, data=data, json=json, files=files)
 
     def _send(self, session, method, url, headers=None, params=None, data=None, json=None, files=None):
-        """ 记录日志,并且赋予token """
+        """记录日志，并且赋予token"""
         if headers is None:
             headers = self._headers
         _url = self.base_path + url
         _resp = session.request(method, _url, headers=headers, params=params, data=data, json=json, files=files)
-        logging.info(headers)
+        logging.info(f'current_time = {datetime.datetime.now()}')
         logging.info(f'response time :{_resp.elapsed.total_seconds()}')
         logging.info(f'current api:{_resp.request.url},\njson: {_resp.request.body}\nresp: {_resp.text} \ndone\n\n')
 
-        return _resp
+        # 如果响应是 JSON 格式的数据，并且包含 'data' 字段，则返回 'data' 字段的值
+        if _resp.headers.get('content-type', '').startswith('application/json') and 'data' in _resp.json():
+            return _resp.json()['data']
+        else:
+            return _resp  # 如果不是 JSON 格式的数据或不包含 'data' 字段，则返回原始响应文本
