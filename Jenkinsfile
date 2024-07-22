@@ -41,7 +41,7 @@ pipeline {
 			sh '''
 			pwd
 			whoami
-			python3 -m venv
+			python3 -m venv .venv
 			source venv/bin/activate
 			pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
