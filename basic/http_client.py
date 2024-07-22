@@ -22,7 +22,8 @@ class BasicHttpClient:
         self.header('Content-Type', 'application/json;charset=utf-8', )
         self.header('tm-header-tenantid', tenant_info['tenantId'])
         self.header('tm-header-userid', tenant_info['userId'])
-        self.header('cookie', f"'TGC'={dict(self._session.cookies.items()).get('acw_tc')}")
+        cookie = "; ".join([f"{key}={value}" for key, value in self._session.cookies.items()])
+        self.header('cookie', cookie)
 
     def header(self, name, value):
         self._headers[name] = value
@@ -66,8 +67,13 @@ class BasicHttpClient:
         logging.info(f'response time :{_resp.elapsed.total_seconds()}')
         logging.info(f'current api:{_resp.request.url},\njson: {_resp.request.body}\nresp: {_resp.text} \ndone\n\n')
 
-        # 如果响应是 JSON 格式的数据，并且包含 'data' 字段，则返回 'data' 字段的值
-        if _resp.headers.get('content-type', '').startswith('application/json') and 'data' in _resp.json():
-            return _resp.json()['data']
+        if _resp.headers.get('content-type', '').startswith('application/json'):
+            json_resp = _resp.json()
+            # 如果 'data' 字段不是 None
+            if 'data' in json_resp and json_resp['data'] is not None:
+                return json_resp['data']
+            else:
+                # 返回整个 JSON 响应
+                return json_resp
         else:
-            return _resp  # 如果不是 JSON 格式的数据或不包含 'data' 字段，则返回原始响应文本
+            return _resp  # 如果不是 JSON 格式的数据，则返回原始响应文本

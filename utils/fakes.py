@@ -46,5 +46,8 @@ class Fakers:
         return np.random.randint(1, 100, size=size)
 
 
+
+
+
 f = Fakers()
 print(f.random_int())
