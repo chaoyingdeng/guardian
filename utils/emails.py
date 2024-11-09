@@ -4,12 +4,13 @@ from email.mime.base import MIMEBase
 from email import encoders
 from pathlib import Path
 from smtplib import SMTP
+from smtplib import SMTPException
 import sys
 
 SERVER = 'smtp.qq.com'
 AUTH_CODE = 'rsabmlgwgcoebhfa'
 SENDER = '406125295@qq.com'
-RECEIVERS = '406125295@qq.com, dengchaoying18@gmail.com, super.chaoying@gmail.com '
+RECEIVERS = '406125295@qq.com, dengchaoying18@gmail.com, super.chaoying@gmail.com'
 
 
 class Email:
@@ -35,11 +36,16 @@ class Email:
         if self.attachment_files:
             for file_path in self.attachment_files:
                 self._attach_file(file_path)
-
-        smtp_server = SMTP(self.server)
-        smtp_server.login(self.sender, self.auth_code)
-        smtp_server.sendmail(self.sender, self.receivers.split(','), self.msg.as_string())
-        smtp_server.quit()
+        try:
+            smtp_server = SMTP(self.server, timeout=60)
+            smtp_server.ehlo()
+            smtp_server.starttls()
+            smtp_server.set_debuglevel(1)
+            smtp_server.login(self.sender, self.auth_code)
+            smtp_server.sendmail(self.sender, self.receivers.split(','), self.msg.as_string())
+            smtp_server.quit()
+        except SMTPException:
+            print("error: connected email failure")
 
     def _attach_file(self, file_path):
         if not Path(file_path).exists():
@@ -54,6 +60,7 @@ class Email:
 
 class SendDailyReport(Email):
     template_path = Path(__file__).parent.parent / 'data' / 'report_related' / 'daily_template.html'
+
     summary_json = Path(__file__).parent.parent / 'data' / 'report_related' / 'report.json'
     detail_json = Path(__file__).parent.parent / 'data' / 'report_related' / 'origin_report.json'
 

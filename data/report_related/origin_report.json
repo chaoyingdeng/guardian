@@ -1,1 +1,4 @@
-{}
+{
+    "cases/sfe/flows/test_find_flow_task.py::start": "fail",
+    "cases/sfe/flows/test_sales_list_query.py::start": "fail"
+}
