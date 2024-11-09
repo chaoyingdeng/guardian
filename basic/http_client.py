@@ -1,3 +1,5 @@
+import datetime
+
 import requests
 import logging
 from requests.adapters import HTTPAdapter
@@ -9,7 +11,6 @@ class BasicHttpClient:
     logging.basicConfig(level=logging.INFO, format='%(asctime)s  %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
     def __init__(self, env, tenant_id, account, password):
-        print(f"This is env{env}")
         self.env = env
         self.tenant_id = tenant_id
         self.account = account
@@ -21,7 +22,8 @@ class BasicHttpClient:
         self.header('Content-Type', 'application/json;charset=utf-8', )
         self.header('tm-header-tenantid', tenant_info['tenantId'])
         self.header('tm-header-userid', tenant_info['userId'])
-        self.header('cookie', f"'TGC'={dict(self._session.cookies.items()).get('acw_tc')}")
+        cookie = "; ".join([f"{key}={value}" for key, value in self._session.cookies.items()])
+        self.header('cookie', cookie)
 
     def header(self, name, value):
         self._headers[name] = value
@@ -56,13 +58,22 @@ class BasicHttpClient:
             return self._send(session, method, url, headers=headers, params=params, data=data, json=json, files=files)
 
     def _send(self, session, method, url, headers=None, params=None, data=None, json=None, files=None):
-        """ 记录日志,并且赋予token """
+        """记录日志，并且赋予token"""
         if headers is None:
             headers = self._headers
         _url = self.base_path + url
         _resp = session.request(method, _url, headers=headers, params=params, data=data, json=json, files=files)
-        logging.info(headers)
+        logging.info(f'current_time = {datetime.datetime.now()}')
         logging.info(f'response time :{_resp.elapsed.total_seconds()}')
         logging.info(f'current api:{_resp.request.url},\njson: {_resp.request.body}\nresp: {_resp.text} \ndone\n\n')
 
-        return _resp
+        if _resp.headers.get('content-type', '').startswith('application/json'):
+            json_resp = _resp.json()
+            # 如果 'data' 字段不是 None
+            if 'data' in json_resp and json_resp['data'] is not None:
+                return json_resp['data']
+            else:
+                # 返回整个 JSON 响应
+                return json_resp
+        else:
+            return _resp  # 如果不是 JSON 格式的数据，则返回原始响应文本

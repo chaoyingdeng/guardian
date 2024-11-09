@@ -1,13 +1,18 @@
-import json, pytest, re, logging
-from pathlib import Path
-from business.instance import Instance
-from datetime import datetime
-from utils.paths import create_case_test_file_path
-from utils.fakes import Fakers
-from utils.excels import Excel
 from functools import partial
-from basic.exceptions import GuardianError
+from pathlib import Path
+
+import json
+import logging
+import pytest
+import re
+
 import setting
+from business.instance import Instance
+from utils.excels import Excel
+from utils.fakes import Fakers
+from utils.paths import create_case_test_file_path
+
+from utils.ceate_test_data import get_data
 
 
 @pytest.fixture(name='instance', scope='session')
@@ -42,13 +47,34 @@ def get_user_info():
     yield setting.user_id
 
 
+@pytest.fixture(name='test_data_factory', scope='session')
+def create_test_data():
+    yield get_data
+
+
 # -------------------------------------------------------------------------#
 # pytest hooks                                                             #
 # -------------------------------------------------------------------------#
 
 
 def pytest_sessionstart(session):
-    print('测试流程开始')
+    """ 清除上次脚本测试数据 """
+
+    def list_directory_contents(dir_path: Path):
+        all_contents = list(dir_path.iterdir())
+        _files = [item for item in all_contents if item.is_file()]
+        _directories = [item for item in all_contents if item.is_dir()]
+        return _files, _directories
+
+    target_path = Path(session.config.rootdir / 'data')
+    print(target_path, type(target_path))
+
+    files, directories = list_directory_contents(target_path)
+    remove_path_list = [_ for _ in directories if not _.name.endswith("report_related")]
+
+    import shutil
+    for _ in remove_path_list:
+        shutil.rmtree(_)
 
 
 @pytest.hookimpl
