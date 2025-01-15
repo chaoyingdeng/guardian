@@ -7,3 +7,5 @@ def start(instance):
 
     resp = instance.sfe.get_indicator_list(year_id)
     assert resp
+
+

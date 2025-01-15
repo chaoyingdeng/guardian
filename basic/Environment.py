@@ -17,3 +17,4 @@ class Environment:
     @property
     def environment_dict(self):
         return {'env': self._env, 'tenant_id': self._tenant_id, 'account': self._account, 'password': self._password}
+
